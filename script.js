@@ -1,26 +1,47 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const mouse = document.querySelector(".mouse");
+  const body = document.body;
+  const trailSize = 10; // Number of trail elements
+  const trail = createTrail(trailSize);
 
   document.addEventListener("mousemove", function (e) {
     const x = e.clientX;
     const y = e.clientY;
 
-    const randomColor = getRandomRainbowColor();
-    mouse.style.backgroundColor = randomColor;
-    mouse.style.opacity = "1";
-    mouse.style.transform = `translate(${x - 10}px, ${y - 10}px)`;
+    updateTrail(x, y);
   });
 
   document.addEventListener("mouseout", function () {
-    mouse.style.opacity = "0";
+    clearTrail();
   });
 
-  function getRandomRainbowColor() {
-    const letters = "0123456789ABCDEF";
-    let color = "#";
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
+  function createTrail(size) {
+    const trail = [];
+    for (let i = 0; i < size; i++) {
+      const trailElement = document.createElement("div");
+      trailElement.className = "trail";
+      body.appendChild(trailElement);
+      trail.push(trailElement);
     }
-    return color;
+    return trail;
+  }
+
+  function updateTrail(x, y) {
+    for (let i = trail.length - 1; i > 0; i--) {
+      const prevTrail = trail[i - 1];
+      const currentTrail = trail[i];
+
+      currentTrail.style.left = prevTrail.style.left;
+      currentTrail.style.top = prevTrail.style.top;
+    }
+
+    trail[0].style.left = x - 5 + "px";
+    trail[0].style.top = y - 5 + "px";
+  }
+
+  function clearTrail() {
+    for (const trailElement of trail) {
+      trailElement.style.left = "-100px";
+      trailElement.style.top = "-100px";
+    }
   }
 });
